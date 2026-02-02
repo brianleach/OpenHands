@@ -1,0 +1,53 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "openhands-worker",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-01-30",
+  "compatibility_flags": ["nodejs_compat"],
+
+  // Sandbox container configuration
+  // The image is built from the repo root to include the openhands package
+  // Build context is set to parent directory (..) to access openhands/, pyproject.toml, etc.
+  "containers": [
+    {
+      "class_name": "Sandbox",
+      "image": {
+        "dockerfile": "./Dockerfile",
+        "context": ".."
+      },
+      "instance_type": "standard-1",
+      "max_instances": 5
+    }
+  ],
+
+  // Durable Objects for persistent state
+  "durable_objects": {
+    "bindings": [
+      {
+        "class_name": "Sandbox",
+        "name": "Sandbox"
+      }
+    ]
+  },
+
+  // SQLite for Durable Object state
+  "migrations": [
+    {
+      "new_sqlite_classes": ["Sandbox"],
+      "tag": "v1"
+    }
+  ],
+
+  // R2 bucket for config and backup storage
+  "r2_buckets": [
+    {
+      "binding": "OPENHANDS_STORAGE",
+      "bucket_name": "openhands-worker-data"
+    }
+  ],
+
+  // Environment variables
+  "vars": {
+    "SANDBOX_SLEEP_AFTER": "never"
+  }
+}

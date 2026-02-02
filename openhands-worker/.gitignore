@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Local Cloudflare state
+.wrangler/
+
+# Environment variables
+.dev.vars
+.env
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
