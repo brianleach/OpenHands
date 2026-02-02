@@ -42,12 +42,11 @@ WORKDIR /opt/openhands
 # Copy dependency files first for better caching
 COPY pyproject.toml poetry.lock ./
 
-# Copy the OpenHands package and microagents
+# Copy the OpenHands package
 COPY openhands/ ./openhands/
-COPY microagents/ ./microagents/
 
-# Install dependencies (main only, no dev dependencies)
-RUN /root/.local/bin/poetry install --only main --no-interaction
+# Install dependencies (main only, no dev dependencies, no root package)
+RUN /root/.local/bin/poetry install --only main --no-interaction --no-root
 
 # =============================================================================
 # Create wrapper scripts for running OpenHands resolver
@@ -62,6 +61,7 @@ RUN printf '#!/bin/bash\ncd /opt/openhands\n/root/.local/bin/poetry run python -
 # Set environment
 ENV PATH="/root/.local/bin:$PATH"
 ENV PYTHONUNBUFFERED=1
+ENV PYTHONPATH=/opt/openhands
 
 # OpenHands resolver configuration defaults
 # These can be overridden via environment variables at runtime
